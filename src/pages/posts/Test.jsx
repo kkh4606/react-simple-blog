@@ -1,18 +1,7 @@
-import { Dropdown, DropdownItem } from "flowbite-react";
+import React from "react";
 
 function Test() {
-  return (
-    <>
-      <Dropdown label="Dropdown button" dismissOnClick={false}>
-        <DropdownItem>Dashboard</DropdownItem>
-        <DropdownItem>Settings</DropdownItem>
-        <DropdownItem>Earnings</DropdownItem>
-        <DropdownItem>Sign out</DropdownItem>
-      </Dropdown>
-
-      <button className="text-"></button>
-    </>
-  );
+  return <div>Test</div>;
 }
 
 export default Test;

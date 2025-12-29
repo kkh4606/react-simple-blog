@@ -8,6 +8,8 @@ function Login() {
     password: "123",
   });
 
+  let [error, setError] = useState(null);
+
   let navigate = useNavigate();
 
   let userLogin = async (e) => {
@@ -19,12 +21,15 @@ function Login() {
           "Content-Type": "application/x-www-form-urlencoded",
         },
       });
+
+      console.log(res.data);
       if (res.status === 200) {
         localStorage.setItem("token", res.data.access_token);
+        localStorage.setItem("user", JSON.stringify(res.data));
         navigate("/");
       }
     } catch (err) {
-      console.log(err);
+      setError(err.response.data);
     }
   };
   return (
@@ -88,6 +93,9 @@ function Login() {
                     </svg>
                   </div>
                 </div>
+                {error && (
+                  <p className="text-red-700 font-semibold">{error.detail}</p>
+                )}
               </div>
 
               <div className="mt-6">

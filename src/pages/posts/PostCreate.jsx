@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { postContext } from "../../context/PostContext";
 
 function PostCreate() {
@@ -8,6 +8,10 @@ function PostCreate() {
     content: "",
     published: true,
   });
+
+  let [file, setFile] = useState(null);
+
+  let [imageUrl, setImageUrl] = useState(null);
 
   let { posts, setPosts } = useContext(postContext);
 
@@ -25,6 +29,8 @@ function PostCreate() {
           },
         });
 
+        console.log(res.data);
+
         if (res.status === 201) {
           setNewPost({ ...new_post, content: "" });
           setPosts([{ Post: res.data }, ...posts]);
@@ -35,15 +41,60 @@ function PostCreate() {
     }
   };
 
+  const handleChange = (e) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    setFile(e.target.files[0]); // store the actual File object
+  };
+
+  const uploadProfile = async (e) => {
+    e.preventDefault();
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file); // append the File object, not URL
+
+    try {
+      let res = await axios.put("http://127.0.0.1:8000/upload", formData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "multipart/form-data", // important
+        },
+      });
+
+      console.log("hi");
+      setImageUrl(res.data.profile_pic);
+
+      console.log("Uploaded user:", res.data.profile_pic);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <>
       <div className="bg-white rounded-lg shadow p-4">
         <div className="flex items-start space-x-3">
-          <img
-            src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80"
-            alt="User"
-            className="w-12 h-12 rounded-full object-cover"
-          />
+          <div>
+            <img
+              src={
+                imageUrl
+                  ? imageUrl
+                  : "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80"
+              }
+              alt="User"
+              className="w-12 h-12 rounded-full object-cover"
+            />
+
+            <form action="" onSubmit={uploadProfile}>
+              <input
+                type="file"
+                onChange={handleChange}
+                className="file-input"
+              />
+              <button type="submit"> upload</button>
+            </form>
+          </div>
+
           <div className="flex-1">
             <textarea
               value={new_post.content}

@@ -37,6 +37,7 @@ export default function Feeds() {
               return (
                 <div className="space-y-6" key={post.Post.id}>
                   <FeedPost
+                    post={post}
                     id={post.Post.id}
                     user={post.Post.owner.name}
                     avatar="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80"

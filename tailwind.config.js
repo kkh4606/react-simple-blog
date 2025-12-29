@@ -1,9 +1,10 @@
-import flowbiteReact from "flowbite-react/plugin/tailwindcss";
-
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [// <- Add this line for Vite
-  "./index.html", "./src/**/*.{js,jsx,ts,tsx}", ".flowbite-react\\class-list.json"],
+  content: [
+    // <- Add this line for Vite
+    "./index.html",
+    "./src/**/*.{js,jsx,ts,tsx}",
+  ],
   theme: {
     extend: {
       colors: {
@@ -34,5 +35,5 @@ export default {
       },
     },
   },
-  plugins: [flowbiteReact],
+  plugins: [],
 };
