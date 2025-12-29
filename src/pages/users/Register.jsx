@@ -21,7 +21,7 @@ function Register() {
       if (res.status === 201) {
         localStorage.setItem("token", res.data.token);
 
-        // navigate("/");
+        navigate("/");
       }
     } catch (err) {
       setError(err.response.data);

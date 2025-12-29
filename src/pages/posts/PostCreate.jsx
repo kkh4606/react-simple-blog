@@ -1,64 +1,84 @@
 import axios from "axios";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { postContext } from "../../context/PostContext";
 
 function PostCreate() {
-  let [post, setPost] = useState({
+  let [new_post, setNewPost] = useState({
     title: "title",
-    content: "content",
+    content: "",
     published: true,
   });
 
+  let { posts, setPosts } = useContext(postContext);
+
+  let [error, setError] = useState(null);
+
   let createPost = async () => {
     try {
-      let res = await axios.post("http://127.0.0.1:8000/posts", post, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      if (new_post.content === "") {
+        setError({ message: "post shouldn't be blank" });
+      } else {
+        setError(null);
+        let res = await axios.post("http://127.0.0.1:8000/posts", new_post, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
 
-      console.log(res);
-    } catch {
-      return;
+        if (res.status === 201) {
+          setNewPost({ ...new_post, content: "" });
+          setPosts([{ Post: res.data }, ...posts]);
+        }
+      }
+    } catch (err) {
+      setError(err);
     }
   };
 
   return (
     <>
-      <div className="heading text-center font-bold text-2xl m-5 text-gray-800">
-        New Post
-      </div>
-
-      <div className="editor mx-auto w-10/12 flex flex-col text-gray-800 border border-gray-300 p-4 shadow-lg max-w-2xl">
-        <input
-          value={post.title}
-          onChange={(e) => {
-            setPost({ ...post, title: e.target.value });
-          }}
-          className="title bg-gray-100 border border-gray-300 p-2 mb-4 outline-none"
-          spellCheck="false"
-          placeholder="Title"
-          type="text"
-        />
-        <textarea
-          onChange={(e) => {
-            setPost({ ...post, content: e.target.value });
-          }}
-          value={post.content}
-          className="description bg-gray-100 sec p-3 h-60 border border-gray-300 outline-none"
-          // spellCheck="false"
-          placeholder="Describe everything about this post here"
-        ></textarea>
-
-        <div className="buttons flex">
-          <div className="btn border border-gray-300 p-1 px-4 font-semibold cursor-pointer text-gray-500 ml-auto">
-            Cancel
+      <div className="bg-white rounded-lg shadow p-4">
+        <div className="flex items-start space-x-3">
+          <img
+            src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80"
+            alt="User"
+            className="w-12 h-12 rounded-full object-cover"
+          />
+          <div className="flex-1">
+            <textarea
+              value={new_post.content}
+              onChange={(e) => {
+                setNewPost({ ...new_post, content: e.target.value });
+              }}
+              className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              rows="2"
+              placeholder="What's on your mind?"
+            />
+            {error && (
+              <p className="text-red-600 font-semibold text-xl">
+                {error.message}
+              </p>
+            )}
+            <div className="flex justify-between items-center mt-3">
+              <div className="flex space-x-3">
+                <button className="p-2 text-gray-500 hover:text-primary-600 rounded-full hover:bg-primary-50">
+                  <i className="fas fa-image"></i>
+                </button>
+                <button className="p-2 text-gray-500 hover:text-primary-600 rounded-full hover:bg-primary-50">
+                  <i className="fas fa-video"></i>
+                </button>
+                <button className="p-2 text-gray-500 hover:text-primary-600 rounded-full hover:bg-primary-50">
+                  <i className="fas fa-link"></i>
+                </button>
+              </div>
+              <button
+                onClick={createPost}
+                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium "
+              >
+                Post
+              </button>
+            </div>
           </div>
-          <button
-            onClick={createPost}
-            className="btn border border-indigo-500 p-1 px-4 font-semibold cursor-pointer text-gray-200 ml-2 bg-indigo-500"
-          >
-            Post
-          </button>
         </div>
       </div>
     </>

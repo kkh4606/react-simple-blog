@@ -3,12 +3,15 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import { RouterProvider } from "react-router-dom";
 import router from "./routes/router";
-import App from "./App";
+import Home from "./pages/Home";
+import { PostContextProvider } from "./context/PostContext";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router={router}>
-      <App />
-    </RouterProvider>
+    <PostContextProvider>
+      <RouterProvider router={router}>
+        <Home />
+      </RouterProvider>
+    </PostContextProvider>
   </StrictMode>
 );
