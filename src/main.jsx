@@ -5,13 +5,16 @@ import { RouterProvider } from "react-router-dom";
 import router from "./routes/router";
 import Home from "./pages/Home";
 import { PostContextProvider } from "./context/PostContext";
+import { AuthContextProvider } from "./context/AuthContext";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <PostContextProvider>
-      <RouterProvider router={router}>
-        <Home />
-      </RouterProvider>
-    </PostContextProvider>
+    <AuthContextProvider>
+      <PostContextProvider>
+        <RouterProvider router={router}>
+          <Home />
+        </RouterProvider>
+      </PostContextProvider>
+    </AuthContextProvider>
   </StrictMode>
 );

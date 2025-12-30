@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { postContext } from "../../context/PostContext";
+import { authContext } from "../../context/AuthContext";
 
 function PostCreate() {
   let [new_post, setNewPost] = useState({
@@ -11,7 +12,11 @@ function PostCreate() {
 
   let [file, setFile] = useState(null);
 
-  let [imageUrl, setImageUrl] = useState(null);
+  let [imageUrl, setImageUrl] = useState("");
+
+  let { users, setUsers } = useContext(authContext);
+
+  let { logged_in_user, get_login_user } = useContext(authContext);
 
   let { posts, setPosts } = useContext(postContext);
 
@@ -43,32 +48,40 @@ function PostCreate() {
 
   const handleChange = (e) => {
     if (!e.target.files || e.target.files.length === 0) return;
-    setFile(e.target.files[0]); // store the actual File object
+    setFile(e.target.files[0]);
   };
 
-  const uploadProfile = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append("file", file); // append the File object, not URL
 
     try {
+      let formData = new FormData();
+      formData.append("file", file);
+
       let res = await axios.put("http://127.0.0.1:8000/upload", formData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
-          "Content-Type": "multipart/form-data", // important
         },
       });
 
-      console.log("hi");
-      setImageUrl(res.data.profile_pic);
+      if (res.status === 200) {
+        setImageUrl(res.data.profile_pic);
 
-      console.log("Uploaded user:", res.data.profile_pic);
+        console.log(logged_in_user.id);
+
+        setUsers((prev) =>
+          prev.map((user) =>
+            user.id === logged_in_user.id
+              ? { ...users, profile_pic: imageUrl }
+              : user
+          )
+        );
+      }
     } catch (err) {
-      console.error(err);
+      console.log(err);
     }
   };
+
 
   return (
     <>
@@ -77,21 +90,21 @@ function PostCreate() {
           <div>
             <img
               src={
-                imageUrl
-                  ? imageUrl
+                logged_in_user
+                  ? logged_in_user.profile_pic
                   : "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80"
               }
               alt="User"
               className="w-12 h-12 rounded-full object-cover"
             />
 
-            <form action="" onSubmit={uploadProfile}>
+            <form action="" onSubmit={handleSubmit}>
               <input
                 type="file"
                 onChange={handleChange}
                 className="file-input"
               />
-              <button type="submit"> upload</button>
+              <button type="submit">upload</button>
             </form>
           </div>
 

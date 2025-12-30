@@ -1,15 +1,12 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import PostCreate from "../pages/posts/PostCreate";
 import SiderBar from "./SiderBar";
 import FeedPost from "./FeedPost";
 import { postContext } from "../context/PostContext";
 
 export default function Feeds() {
-  let { posts, getPosts } = useContext(postContext);
+  let { posts } = useContext(postContext);
 
-  useEffect(() => {
-    getPosts();
-  }, []);
   return (
     <div className="bg-gray-50 min-h-screen max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
       <header className="py-6 border-b border-gray-200">
@@ -40,7 +37,7 @@ export default function Feeds() {
                     post={post}
                     id={post.Post.id}
                     user={post.Post.owner.name}
-                    avatar="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80"
+                    avatar={post.Post.owner.profile_pic}
                     timeAgo={new Date(post.Post.created_at).toLocaleString()}
                     content={post.Post.content}
                     // image="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=400&q=80"

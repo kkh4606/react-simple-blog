@@ -1,11 +1,14 @@
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { postContext } from "../context/PostContext";
+import { authContext } from "../context/AuthContext";
 
 function FeedPost({ user, avatar, timeAgo, content, image, likes, id, post }) {
-  let { posts, setPosts, getPosts } = useContext(postContext);
+  let { posts, setPosts } = useContext(postContext);
 
   let [currentUser, setCurrentUser] = useState(null);
+
+  let { logged_in_user } = useContext(authContext);
 
   let deletePost = async () => {
     try {
@@ -45,14 +48,6 @@ function FeedPost({ user, avatar, timeAgo, content, image, likes, id, post }) {
     }
   };
 
-  useEffect(() => {
-    let token = localStorage.getItem("token");
-    let userInfos = localStorage.getItem("user");
-
-    if (token && userInfos) {
-      setCurrentUser(JSON.parse(userInfos));
-    }
-  }, []);
   return (
     <div className="bg-white rounded-lg shadow overflow-hidden">
       <div className="p-4">
@@ -99,7 +94,7 @@ function FeedPost({ user, avatar, timeAgo, content, image, likes, id, post }) {
             <span>{likes}</span>
           </div>
 
-          {currentUser && currentUser.id != post.Post.owner_id ? (
+          {logged_in_user && logged_in_user.id != post.Post.owner_id ? (
             <button>
               <svg
                 xmlns="http://www.w3.org/2000/svg"

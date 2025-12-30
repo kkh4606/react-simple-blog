@@ -25,6 +25,10 @@ let PostContextProvider = ({ children }) => {
     }
   };
 
+  useEffect(() => {
+    getPosts();
+  }, []);
+
   return (
     <postContext.Provider value={{ posts, getPosts, setPosts }}>
       {children}
