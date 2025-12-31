@@ -39,14 +39,18 @@ let AuthContextProvider = ({ children }) => {
       return;
     }
   }
-  useEffect(() => {
-    getUsers();
-    get_login_user();
-  }, []);
+
 
   return (
     <authContext.Provider
-      value={{ getUsers, users, logged_in_user, get_login_user, setUsers }}
+      value={{
+        getUsers,
+        users,
+        logged_in_user,
+        get_login_user,
+        setUsers,
+        setLoggedInUser,
+      }}
     >
       {children}
     </authContext.Provider>

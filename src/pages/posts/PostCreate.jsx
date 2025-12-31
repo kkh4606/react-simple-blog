@@ -9,14 +9,10 @@ function PostCreate() {
     content: "",
     published: true,
   });
+  console.log("hi");
+  let { logged_in_user, setLoggedInUser } = useContext(authContext);
 
   let [file, setFile] = useState(null);
-
-  let [imageUrl, setImageUrl] = useState("");
-
-  let { users, setUsers } = useContext(authContext);
-
-  let { logged_in_user, get_login_user } = useContext(authContext);
 
   let { posts, setPosts } = useContext(postContext);
 
@@ -65,15 +61,25 @@ function PostCreate() {
       });
 
       if (res.status === 200) {
-        setImageUrl(res.data.profile_pic);
+        setLoggedInUser({
+          ...logged_in_user,
+          profile_pic: res.data.profile_pic,
+        });
 
-        console.log(logged_in_user.id);
-
-        setUsers((prev) =>
-          prev.map((user) =>
-            user.id === logged_in_user.id
-              ? { ...users, profile_pic: imageUrl }
-              : user
+        setPosts((prev) =>
+          prev.map((post) =>
+            post.Post.owner.id === logged_in_user.id
+              ? {
+                  ...post,
+                  Post: {
+                    ...post.Post,
+                    owner: {
+                      ...post.Post.owner,
+                      profile_pic: res.data.profile_pic,
+                    },
+                  },
+                }
+              : post
           )
         );
       }
@@ -81,7 +87,6 @@ function PostCreate() {
       console.log(err);
     }
   };
-
 
   return (
     <>

@@ -3,9 +3,22 @@ import PostCreate from "../pages/posts/PostCreate";
 import SiderBar from "./SiderBar";
 import FeedPost from "./FeedPost";
 import { postContext } from "../context/PostContext";
+import { authContext } from "../context/AuthContext";
 
 export default function Feeds() {
   let { posts } = useContext(postContext);
+
+  let { getUsers, get_login_user } = useContext(authContext);
+  let { getPosts } = useContext(postContext);
+
+  useEffect(() => {
+    getUsers();
+    get_login_user();
+  }, []);
+
+  useEffect(() => {
+    getPosts();
+  }, []);
 
   return (
     <div className="bg-gray-50 min-h-screen max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
