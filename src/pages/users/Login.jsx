@@ -22,7 +22,6 @@ function Login() {
         },
       });
 
-      console.log(res.data);
       if (res.status === 200) {
         localStorage.setItem("token", res.data.access_token);
         localStorage.setItem("user", JSON.stringify(res.data));

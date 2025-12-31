@@ -2,17 +2,23 @@ import { createBrowserRouter, Navigate } from "react-router-dom";
 import Register from "../pages/users/Register";
 import Login from "../pages/users/Login";
 import Test from "../pages/posts/Test";
-import GetPosts from "../pages/posts/GetPosts";
-import Home from "../pages/Home";
+import Profile from "../componments/Profile";
+import Layout from "../componments/Layout";
+import Posts from "../componments/Posts";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Home />,
+    element: <Layout />,
     children: [
       {
-        path: "/posts",
-        element: <GetPosts />,
+        path: "/",
+        element: <Posts />,
+      },
+
+      {
+        path: "/profile",
+        element: <Profile />,
       },
     ],
   },

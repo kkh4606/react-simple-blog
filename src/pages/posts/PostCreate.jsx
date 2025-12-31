@@ -9,7 +9,7 @@ function PostCreate() {
     content: "",
     published: true,
   });
-  console.log("hi");
+
   let { logged_in_user, setLoggedInUser } = useContext(authContext);
 
   let [file, setFile] = useState(null);
@@ -30,8 +30,6 @@ function PostCreate() {
           },
         });
 
-        console.log(res.data);
-
         if (res.status === 201) {
           setNewPost({ ...new_post, content: "" });
           setPosts([{ Post: res.data }, ...posts]);
@@ -47,50 +45,9 @@ function PostCreate() {
     setFile(e.target.files[0]);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      let formData = new FormData();
-      formData.append("file", file);
-
-      let res = await axios.put("http://127.0.0.1:8000/upload", formData, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-
-      if (res.status === 200) {
-        setLoggedInUser({
-          ...logged_in_user,
-          profile_pic: res.data.profile_pic,
-        });
-
-        setPosts((prev) =>
-          prev.map((post) =>
-            post.Post.owner.id === logged_in_user.id
-              ? {
-                  ...post,
-                  Post: {
-                    ...post.Post,
-                    owner: {
-                      ...post.Post.owner,
-                      profile_pic: res.data.profile_pic,
-                    },
-                  },
-                }
-              : post
-          )
-        );
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
   return (
     <>
-      <div className="bg-white rounded-lg shadow p-4">
+      <div className="bg-white rounded-lg shadow p-4 mx-8">
         <div className="flex items-start space-x-3">
           <div>
             <img
@@ -102,15 +59,6 @@ function PostCreate() {
               alt="User"
               className="w-12 h-12 rounded-full object-cover"
             />
-
-            <form action="" onSubmit={handleSubmit}>
-              <input
-                type="file"
-                onChange={handleChange}
-                className="file-input"
-              />
-              <button type="submit">upload</button>
-            </form>
           </div>
 
           <div className="flex-1">

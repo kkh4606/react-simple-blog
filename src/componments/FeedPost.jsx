@@ -49,7 +49,7 @@ function FeedPost({ user, avatar, timeAgo, content, image, likes, id, post }) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow overflow-hidden">
+    <div className="bg-white mx-8 rounded-lg shadow overflow-hidden">
       <div className="p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
@@ -67,7 +67,7 @@ function FeedPost({ user, avatar, timeAgo, content, image, likes, id, post }) {
         <div className="mt-4 text-gray-700">{content}</div>
       </div>
       {image && <img src={image} alt="Post" className="w-full h-auto" />}
-      <div className="px-4 py-3 border-t border-gray-100">
+      <div className="px-3 py-3 border-t border-gray-100">
         <div className="flex justify-between text-gray-500">
           <div className="flex items-center space-x-1 hover:text-primary-600">
             <button

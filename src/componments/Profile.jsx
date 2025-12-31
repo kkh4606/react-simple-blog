@@ -1,41 +1,76 @@
+import { useContext } from "react";
+import { postContext } from "../context/PostContext";
+import FeedPost from "./FeedPost";
+import { authContext } from "../context/AuthContext";
+
 function Profile() {
+  let { posts } = useContext(postContext);
+
+  let { logged_in_user } = useContext(authContext);
+  console.log(logged_in_user);
   return (
     <>
-      <div className="m-10 max-w-sm">
-        <div className="rounded-lg border bg-white px-4 pt-8 pb-10 shadow-lg">
-          <div className="relative mx-auto w-36 rounded-full">
-            <span className="absolute right-0 m-3 h-3 w-3 rounded-full bg-green-500 ring-2 ring-green-300 ring-offset-2"></span>
+      <div className="flex-1  space-y-6">
+        <div className=" mx-auto  flex max-w-xs flex-col items-center rounded-xl border px-4 py-4 text-center md:max-w-lg md:flex-row md:items-start md:text-left">
+          <div className="mb-4 md:mr-6 md:mb-0">
             <img
-              className="mx-auto h-auto w-full rounded-full"
-              src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80"
+              className="h-56 rounded-lg object-cover md:w-56"
+              src={logged_in_user && logged_in_user.profile_pic}
               alt=""
             />
           </div>
-          <h1 className="my-1 text-center text-xl font-bold leading-8 text-gray-900">
-            Michael Simbal
-          </h1>
-          <h3 className="font-lg text-semibold text-center leading-6 text-gray-600">
-            Marketing Exec. at Denva Corp
-          </h3>
-          <p className="text-center text-sm leading-6 text-gray-500 hover:text-gray-600">
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-            Architecto, placeat!
-          </p>
-          <ul className="mt-3 divide-y rounded bg-gray-100 py-2 px-3 text-gray-600 shadow-sm hover:text-gray-700 hover:shadow">
-            <li className="flex items-center py-3 text-sm">
-              <span>Status</span>
-              <span className="ml-auto">
-                <span className="rounded-full bg-green-200 py-1 px-2 text-xs font-medium text-green-700">
-                  Open for side gigs
-                </span>
-              </span>
-            </li>
-            <li className="flex items-center py-3 text-sm">
-              <span>Joined On</span>
-              <span className="ml-auto">Apr 08, 2022</span>
-            </li>
-          </ul>
+          <div className="">
+            <p className="text-xl font-medium text-gray-700">
+              {logged_in_user && logged_in_user.name}
+            </p>
+            <p className="mb-4 text-sm font-medium text-gray-500">
+              Junior Programmer
+            </p>
+            <div className="flex space-x-2">
+              <div className="flex flex-col items-center rounded-xl bg-gray-100 px-4 py-2">
+                <p className="text-sm font-medium text-gray-500">Articles</p>
+                <p className="text-3xl font-medium text-gray-600">13</p>
+              </div>
+              <div className="flex flex-col items-center rounded-xl bg-gray-100 px-4 py-2">
+                <p className="text-sm font-medium text-gray-500">Papers</p>
+                <p className="text-3xl font-medium text-gray-600">7</p>
+              </div>
+              <div className="flex flex-col items-center rounded-xl bg-gray-100 px-4 py-2">
+                <p className="text-sm font-medium text-gray-500">Followers</p>
+                <p className="text-3xl font-medium text-gray-600">2.5k</p>
+              </div>
+              <div className=""></div>
+            </div>
+            <div className="mb-3"></div>
+            <div className="flex space-x-2">
+              <button className="w-full rounded-lg border-2 bg-white px-4 py-2 font-medium text-gray-500">
+                Message
+              </button>
+              <button className="w-full rounded-lg border-2 border-transparent bg-blue-600 px-4 py-2 font-medium text-white">
+                Follow
+              </button>
+            </div>
+          </div>
         </div>
+
+        {posts &&
+          logged_in_user &&
+          posts.map((post) => {
+            if (post.Post.owner.id === logged_in_user.id)
+              return (
+                <div className="space-y-6" key={post.Post.id}>
+                  <FeedPost
+                    post={post}
+                    id={post.Post.id}
+                    user={post.Post.owner.name}
+                    avatar={post.Post.owner.profile_pic}
+                    timeAgo={new Date(post.Post.created_at).toLocaleString()}
+                    content={post.Post.content}
+                    likes={post.votes ? post.votes : 0}
+                  />
+                </div>
+              );
+          })}
       </div>
     </>
   );
