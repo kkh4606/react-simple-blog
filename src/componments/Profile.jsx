@@ -15,7 +15,11 @@ function Profile() {
           <div className="mb-4 md:mr-6 md:mb-0">
             <img
               className="h-56 rounded-lg object-cover md:w-56"
-              src={logged_in_user && logged_in_user.profile_pic}
+              src={
+                logged_in_user && logged_in_user.profile_pic
+                  ? logged_in_user.profile_pic
+                  : "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80"
+              }
               alt=""
             />
           </div>
@@ -63,7 +67,11 @@ function Profile() {
                     post={post}
                     id={post.Post.id}
                     user={post.Post.owner.name}
-                    avatar={post.Post.owner.profile_pic}
+                    avatar={
+                      post.Post.owner.profile_pic
+                        ? post.Post.owner.profile_pic
+                        : "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80"
+                    }
                     timeAgo={new Date(post.Post.created_at).toLocaleString()}
                     content={post.Post.content}
                     likes={post.votes ? post.votes : 0}

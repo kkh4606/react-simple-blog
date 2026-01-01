@@ -6,9 +6,24 @@ import { authContext } from "../context/AuthContext";
 function FeedPost({ user, avatar, timeAgo, content, image, likes, id, post }) {
   let { posts, setPosts } = useContext(postContext);
 
-  let [currentUser, setCurrentUser] = useState(null);
-
   let { logged_in_user } = useContext(authContext);
+
+  let [react, setReact] = useState(
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth="1.5"
+      stroke="currentColor"
+      className="size-6"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
+      />
+    </svg>
+  );
 
   let deletePost = async () => {
     try {
@@ -42,6 +57,22 @@ function FeedPost({ user, avatar, timeAgo, content, image, likes, id, post }) {
               : post
           )
         );
+
+        setReact(
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            className="bi bi-heart-fill"
+            viewBox="0 0 16 16"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"
+            />
+          </svg>
+        );
       }
     } catch (err) {
       console.log(err);
@@ -63,6 +94,19 @@ function FeedPost({ user, avatar, timeAgo, content, image, likes, id, post }) {
               <p className="text-xs text-gray-500">{timeAgo}</p>
             </div>
           </div>
+
+          <div className="flex flex-col relative">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              className="bi bi-three-dots-vertical"
+              viewBox="0 0 16 16"
+            >
+              <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" />
+            </svg>
+          </div>
         </div>
         <div className="mt-4 text-gray-700">{content}</div>
       </div>
@@ -75,20 +119,7 @@ function FeedPost({ user, avatar, timeAgo, content, image, likes, id, post }) {
                 likePost(id);
               }}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="currentColor"
-                className="size-6"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
-                />
-              </svg>
+              {react}
             </button>
 
             <span>{likes}</span>
@@ -96,19 +127,9 @@ function FeedPost({ user, avatar, timeAgo, content, image, likes, id, post }) {
 
           {logged_in_user && logged_in_user.id != post.Post.owner_id ? (
             <button>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="size-6"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z"
-                />
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                {" "}
+                <path d="M307.8 18.4c-12 5-19.8 16.6-19.8 29.6l0 80-112 0c-97.2 0-176 78.8-176 176 0 113.3 81.5 163.9 100.2 174.1 2.5 1.4 5.3 1.9 8.1 1.9 10.9 0 19.7-8.9 19.7-19.7 0-7.5-4.3-14.4-9.8-19.5-9.4-8.8-22.2-26.4-22.2-56.7 0-53 43-96 96-96l96 0 0 80c0 12.9 7.8 24.6 19.8 29.6s25.7 2.2 34.9-6.9l160-160c12.5-12.5 12.5-32.8 0-45.3l-160-160c-9.2-9.2-22.9-11.9-34.9-6.9z" />
               </svg>
             </button>
           ) : (

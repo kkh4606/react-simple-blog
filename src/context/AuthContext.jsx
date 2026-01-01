@@ -40,7 +40,6 @@ let AuthContextProvider = ({ children }) => {
     }
   }
 
-
   return (
     <authContext.Provider
       value={{

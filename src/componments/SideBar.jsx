@@ -1,18 +1,13 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { authContext } from "../context/AuthContext";
 import { postContext } from "../context/PostContext";
 
 function SideBar() {
-  let { setUsers } = useContext(authContext);
+  let { setUsers, logged_in_user } = useContext(authContext);
 
-  let { setPosts } = useContext(postContext);
-
-  let navigate = useNavigate();
   let logOut = () => {
     localStorage.removeItem("token");
-    setUsers([]);
-    setPosts([]);
   };
   return (
     <>
@@ -82,6 +77,27 @@ function SideBar() {
             </button>
             <p>Profile</p>
           </Link>
+
+          {logged_in_user && logged_in_user.role === "admin" ? (
+            <Link
+              to="/dashboard"
+              className="w-full flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 text-gray-700 font-medium"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="m20,11h-6c-.55,0-1,.45-1,1v8c0,.55.45,1,1,1h6c.55,0,1-.45,1-1v-8c0-.55-.45-1-1-1Zm-1,8h-4v-6h4v6Z"></path>
+                <path d="m10,15h-6c-.55,0-1,.45-1,1v4c0,.55.45,1,1,1h6c.55,0,1-.45,1-1v-4c0-.55-.45-1-1-1Zm-1,4h-4v-2h4v2Z"></path>
+                <path d="m20,3h-6c-.55,0-1,.45-1,1v4c0,.55.45,1,1,1h6c.55,0,1-.45,1-1v-4c0-.55-.45-1-1-1Zm-1,4h-4v-2h4v2Z"></path>
+                <path d="m10,3h-6c-.55,0-1,.45-1,1v8c0,.55.45,1,1,1h6c.55,0,1-.45,1-1V4c0-.55-.45-1-1-1Zm-1,8h-4v-6h4v6Z"></path>
+              </svg>
+              <span>Dashboard</span>
+            </Link>
+          ) : null}
 
           <Link className="w-full flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 text-gray-700 font-medium">
             <button onClick={logOut}>

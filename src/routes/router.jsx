@@ -1,10 +1,14 @@
-import { createBrowserRouter, Navigate } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 import Register from "../pages/users/Register";
 import Login from "../pages/users/Login";
-import Test from "../pages/posts/Test";
+import Example from "../pages/posts/Example";
 import Profile from "../componments/Profile";
 import Layout from "../componments/Layout";
 import Posts from "../componments/Posts";
+import AdminPannel from "../admins/AdminPannel";
+import UserLists from "../admins/UserLists";
+import ProtectedRoute from "../utils/ProtectedRoutes";
+import NotFound from "../componments/NotFound";
 
 const router = createBrowserRouter([
   {
@@ -34,7 +38,27 @@ const router = createBrowserRouter([
 
   {
     path: "/test",
-    element: <Test />,
+    element: <Example />,
+  },
+
+  {
+    path: "/dashboard",
+    element: (
+      <ProtectedRoute>
+        <AdminPannel />
+      </ProtectedRoute>
+    ),
+    children: [
+      {
+        path: "users",
+        element: <UserLists />,
+      },
+    ],
+  },
+
+  {
+    path: "/not-found",
+    element: <NotFound />,
   },
 ]);
 

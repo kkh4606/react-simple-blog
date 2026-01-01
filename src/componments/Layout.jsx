@@ -9,13 +9,11 @@ function Layout() {
   let { getPosts } = useContext(postContext);
 
   useEffect(() => {
-    getUsers();
     get_login_user();
-  }, []);
-
-  useEffect(() => {
+    getUsers();
     getPosts();
   }, []);
+
   return (
     <>
       <div className="bg-gray-50  min-h-screen max-w-6xl mx-auto  px-4 sm:px-6 lg:px-8">
