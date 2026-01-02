@@ -7,13 +7,18 @@ import Layout from "../componments/Layout";
 import Posts from "../componments/Posts";
 import AdminPannel from "../admins/AdminPannel";
 import UserLists from "../admins/UserLists";
-import ProtectedRoute from "../utils/ProtectedRoutes";
+import ProtectedAdminPannel from "../utils/ProtectedAdminPannel";
 import NotFound from "../componments/NotFound";
+import ProtectedUserRoute from "../utils/ProtectedUserRoute";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout />,
+    element: (
+      <ProtectedUserRoute>
+        <Layout />
+      </ProtectedUserRoute>
+    ),
     children: [
       {
         path: "/",
@@ -44,9 +49,9 @@ const router = createBrowserRouter([
   {
     path: "/dashboard",
     element: (
-      <ProtectedRoute>
+      <ProtectedAdminPannel>
         <AdminPannel />
-      </ProtectedRoute>
+      </ProtectedAdminPannel>
     ),
     children: [
       {

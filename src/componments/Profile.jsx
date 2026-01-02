@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { postContext } from "../context/PostContext";
 import FeedPost from "./FeedPost";
 import { authContext } from "../context/AuthContext";
@@ -6,8 +6,12 @@ import { authContext } from "../context/AuthContext";
 function Profile() {
   let { posts } = useContext(postContext);
 
-  let { logged_in_user } = useContext(authContext);
-  console.log(logged_in_user);
+  let { user, getUser } = useContext(authContext);
+
+  useEffect(() => {
+    getUser();
+  }, []);
+
   return (
     <>
       <div className="flex-1  space-y-6">
@@ -16,8 +20,8 @@ function Profile() {
             <img
               className="h-56 rounded-lg object-cover md:w-56"
               src={
-                logged_in_user && logged_in_user.profile_pic
-                  ? logged_in_user.profile_pic
+                user && user.profile_pic
+                  ? user.profile_pic
                   : "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80"
               }
               alt=""
@@ -25,7 +29,7 @@ function Profile() {
           </div>
           <div className="">
             <p className="text-xl font-medium text-gray-700">
-              {logged_in_user && logged_in_user.name}
+              {user && user.name}
             </p>
             <p className="mb-4 text-sm font-medium text-gray-500">
               Junior Programmer
@@ -58,9 +62,9 @@ function Profile() {
         </div>
 
         {posts &&
-          logged_in_user &&
+          user &&
           posts.map((post) => {
-            if (post.Post.owner.id === logged_in_user.id)
+            if (post.Post.owner.id === user.id)
               return (
                 <div className="space-y-6" key={post.Post.id}>
                   <FeedPost

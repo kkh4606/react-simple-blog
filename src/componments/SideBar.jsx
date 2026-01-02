@@ -1,13 +1,17 @@
-import { useContext, useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { Link } from "react-router-dom";
 import { authContext } from "../context/AuthContext";
 import { postContext } from "../context/PostContext";
 
 function SideBar() {
-  let { setUsers, logged_in_user } = useContext(authContext);
+  let { user, setUser, setUsers } = useContext(authContext);
+
+  let { setPosts } = useContext(postContext);
 
   let logOut = () => {
     localStorage.removeItem("token");
+    setUser(null);
+    setUsers([]);
   };
   return (
     <>
@@ -78,7 +82,7 @@ function SideBar() {
             <p>Profile</p>
           </Link>
 
-          {logged_in_user && logged_in_user.role === "admin" ? (
+          {user && user.role === "admin" ? (
             <Link
               to="/dashboard"
               className="w-full flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 text-gray-700 font-medium"

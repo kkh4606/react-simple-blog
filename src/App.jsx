@@ -1,9 +1,16 @@
-import React from 'react'
+import Layout from "./componments/Layout";
 
 function App() {
-  return (
-    <div>App</div>
-  )
+  let { getUsers, getUser } = useContext(authContext);
+  let { getPosts } = useContext(postContext);
+
+  useEffect(() => {
+    getUser();
+    getUsers();
+    getPosts();
+  }, []);
+
+  return <Layout />;
 }
 
-export default App
+export default App;

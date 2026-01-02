@@ -1,19 +1,8 @@
 import { Outlet } from "react-router-dom";
 import SideBar from "./SideBar";
-import { createContext, useContext, useEffect, useState } from "react";
-import { authContext } from "../context/AuthContext";
-import { postContext } from "../context/PostContext";
+
 
 function Layout() {
-  let { getUsers, get_login_user } = useContext(authContext);
-  let { getPosts } = useContext(postContext);
-
-  useEffect(() => {
-    get_login_user();
-    getUsers();
-    getPosts();
-  }, []);
-
   return (
     <>
       <div className="bg-gray-50  min-h-screen max-w-6xl mx-auto  px-4 sm:px-6 lg:px-8">

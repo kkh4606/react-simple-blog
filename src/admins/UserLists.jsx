@@ -1,8 +1,24 @@
 import { useContext, useEffect } from "react";
 import { authContext } from "../context/AuthContext";
+import axios from "axios";
 
 function UserLists() {
-  let { users, getUsers } = useContext(authContext);
+  let { users, getUsers, setUsers } = useContext(authContext);
+
+  let deleteUser = async (id) => {
+    try {
+      let res = await axios.delete(`http://127.0.0.1:8000/users/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      if (res.status === 204) {
+        setUsers(users.filter((user) => user.id != id));
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   useEffect(() => {
     getUsers();
@@ -99,7 +115,12 @@ function UserLists() {
                             <button className="bg-blue-500 text-white px-3 py-1 rounded-md text-xs md:text-sm">
                               Edit
                             </button>
-                            <button className="bg-red-500 text-white px-3 py-1 rounded-md text-xs md:text-sm">
+                            <button
+                              onClick={() => {
+                                deleteUser(user.id);
+                              }}
+                              className="bg-red-500 text-white px-3 py-1 rounded-md text-xs md:text-sm"
+                            >
                               Delete
                             </button>
                           </td>

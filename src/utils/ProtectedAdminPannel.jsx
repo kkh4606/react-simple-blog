@@ -3,18 +3,18 @@ import { Navigate } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import { authContext } from "../context/AuthContext";
 
-export default function ProtectedRoute({ children }) {
-  const { logged_in_user, get_login_user } = useContext(authContext);
+export default function ProtectedAdminPannel({ children }) {
+  const { user, getUser } = useContext(authContext);
 
   useEffect(() => {
-    get_login_user();
+    getUser();
   }, []);
 
-  if (!logged_in_user) {
+  if (!user) {
     return <div>loading....</div>;
   }
 
-  if (logged_in_user.role !== "admin") {
+  if (user.role !== "admin") {
     return <Navigate to="/not-found" />;
   }
 

@@ -6,7 +6,7 @@ let authContext = createContext();
 let AuthContextProvider = ({ children }) => {
   let [users, setUsers] = useState([]);
 
-  let [logged_in_user, setLoggedInUser] = useState(null);
+  let [user, setUser] = useState(null);
 
   async function getUsers() {
     try {
@@ -24,7 +24,7 @@ let AuthContextProvider = ({ children }) => {
     }
   }
 
-  async function get_login_user() {
+  async function getUser() {
     try {
       let res = await axios.get("http://127.0.0.1:8000/users/me", {
         headers: {
@@ -33,7 +33,7 @@ let AuthContextProvider = ({ children }) => {
       });
 
       if (res.status === 200) {
-        setLoggedInUser(res.data);
+        setUser(res.data);
       }
     } catch (err) {
       return;
@@ -45,10 +45,10 @@ let AuthContextProvider = ({ children }) => {
       value={{
         getUsers,
         users,
-        logged_in_user,
-        get_login_user,
+        user,
+        getUser,
         setUsers,
-        setLoggedInUser,
+        setUser,
       }}
     >
       {children}
