@@ -1,7 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import Register from "../pages/users/Register";
 import Login from "../pages/users/Login";
-import Example from "../pages/posts/Example";
 import Profile from "../componments/Profile";
 import Layout from "../componments/Layout";
 import Posts from "../componments/Posts";
@@ -10,6 +9,8 @@ import UserLists from "../admins/UserLists";
 import ProtectedAdminPannel from "../utils/ProtectedAdminPannel";
 import NotFound from "../componments/NotFound";
 import ProtectedUserRoute from "../utils/ProtectedUserRoute";
+import Example from "../componments/Example";
+import TestingWithApiData from "../componments/TestingWithApiData";
 
 const router = createBrowserRouter([
   {
@@ -42,11 +43,6 @@ const router = createBrowserRouter([
   },
 
   {
-    path: "/test",
-    element: <Example />,
-  },
-
-  {
     path: "/dashboard",
     element: (
       <ProtectedAdminPannel>
@@ -64,6 +60,15 @@ const router = createBrowserRouter([
   {
     path: "/not-found",
     element: <NotFound />,
+  },
+
+  {
+    path: "/test",
+    element: <Example />,
+  },
+  {
+    path: "/test-with-api",
+    element: <TestingWithApiData />,
   },
 ]);
 

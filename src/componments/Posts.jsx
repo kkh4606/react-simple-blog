@@ -20,7 +20,7 @@ function Posts() {
                 <FeedPost
                   post={post}
                   id={post.Post.id}
-                  user={post.Post.owner.name}
+                  _user={post.Post.owner.name}
                   avatar={
                     post.Post.owner.profile_pic
                       ? post.Post.owner.profile_pic
@@ -28,7 +28,6 @@ function Posts() {
                   }
                   timeAgo={new Date(post.Post.created_at).toLocaleString()}
                   content={post.Post.content}
-                  // image="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&h=400&q=80"
                   likes={post.votes ? post.votes : 0}
                 />
               </div>

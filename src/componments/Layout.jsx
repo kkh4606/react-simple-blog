@@ -5,7 +5,7 @@ import SideBar from "./SideBar";
 function Layout() {
   return (
     <>
-      <div className="bg-gray-50  min-h-screen max-w-6xl mx-auto  px-4 sm:px-6 lg:px-8">
+      <div className="bg-gray-50  min-h-screen max-w-7xl mx-auto  px-4 sm:px-6 lg:px-8">
         <header className="py-6 border-b border-gray-200">
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold text-primary-700">

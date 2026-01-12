@@ -4,13 +4,19 @@ import FeedPost from "./FeedPost";
 import { authContext } from "../context/AuthContext";
 
 function Profile() {
-  let { posts } = useContext(postContext);
+  let { posts, getPosts } = useContext(postContext);
 
   let { user, getUser } = useContext(authContext);
 
   useEffect(() => {
     getUser();
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      getPosts();
+    }
+  }, [user]);
 
   return (
     <>
@@ -61,6 +67,7 @@ function Profile() {
           </div>
         </div>
 
+        <h1 className="font-bold text-2xl ml-9">Posts</h1>
         {posts &&
           user &&
           posts.map((post) => {
