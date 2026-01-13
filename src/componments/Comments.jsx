@@ -2,7 +2,6 @@ import { useContext, useEffect, useState } from "react";
 import { postContext } from "../context/PostContext";
 import { authContext } from "../context/AuthContext";
 import axios from "axios";
-import { flushSync } from "react-dom";
 
 function Comments({ id }) {
   let [content, setContent] = useState("");
@@ -36,8 +35,6 @@ function Comments({ id }) {
         console.log(res.data);
         setPostComments((prev) => [...prev, res.data]);
       }
-
-      console.log(res);
     } catch (err) {
       console.log(err);
     }
@@ -56,13 +53,13 @@ function Comments({ id }) {
   return (
     <>
       <div className="flex flex-col gap-1">
-        <input
+        <textarea
           value={content}
           onChange={(event) => setContent(event.target.value)}
           onFocus={() => setShowButtons(true)}
           type="text"
-          placeholder="Leave a comment"
-          className="border-[1px] border-zinc-400 p-1 w-full rounded-md"
+          placeholder="Write a comment"
+          className="border-[1px] border-zinc-400 py-6 px-2 w-full rounded-md"
         />
 
         {showButtons && (
@@ -72,7 +69,7 @@ function Comments({ id }) {
                 setShowButtons(false);
                 setContent("");
               }}
-              className="rounded-full border-[1px] border-zinc-400 px-1"
+              className="rounded-md border-[1px] border-zinc-400 px-1"
             >
               cancel
             </button>
@@ -81,7 +78,7 @@ function Comments({ id }) {
                 onComment(content);
                 setContent("");
               }}
-              className="rounded-full border-[1px] border-zinc-400 px-1 bg-gray-600 text-white"
+              className="rounded-md border-[1px] border-zinc-400 px-1 bg-gray-600 text-white"
             >
               comment
             </button>
@@ -111,6 +108,8 @@ let CommentsItems = ({ comment }) => {
 
   let [newComment, setNewComment] = useState("");
 
+  let [showReply, setShowReply] = useState(true);
+
   let onComment = async (newComment) => {
     try {
       let res = await axios.post(
@@ -126,7 +125,6 @@ let CommentsItems = ({ comment }) => {
       );
 
       if (res.status === 201) {
-        console.log(res.data);
         setComments((prev) => [...prev, res.data]);
       }
 
@@ -138,12 +136,32 @@ let CommentsItems = ({ comment }) => {
 
   return (
     <>
-      <div
-        key={comment.content}
-        className="border-[1px]  pl-2  py-3 ml-5 my-2 "
-      >
-        <div className="flex flex-col gap-4">
-          <div className="flex items-center gap-2">
+      <div key={comment.id} className=" pt-3  pl-1  ml-3  ">
+        <div className="flex relative flex-col justify-center  bg-gray-100 rounded-md py-5">
+          {comment.parent_id === null && (
+            <button
+              onClick={() => {
+                setShowReply((prev) => !prev);
+              }}
+              className="absolute -left-3"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="size-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                />
+              </svg>
+            </button>
+          )}
+          <div className="flex items-center gap-2 ml-2">
             <img
               className="w-12 h-12 rounded-full object-cover"
               src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80"
@@ -154,45 +172,75 @@ let CommentsItems = ({ comment }) => {
               {new Date(comment.created_at).toLocaleString()}
             </p>
           </div>
-          <div className="ml-4">
+          <div className="ml-3">
             <h1 className="font-semibold">{comment.content}</h1>
+
             <button
-              className="border-[1px] border-zinc-700 rounded-full px-2"
+              className="flex items-center"
               onClick={() => {
                 setIsReplying((prev) => !prev);
               }}
             >
-              reply
+              <svg
+                className="mr-1.5 w-3.5 h-3.5"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 20 18"
+              >
+                <path
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M5 5h5M5 8h2m6-3h2m-5 3h6m2-7H2a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h3v5l5-5h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1Z"
+                ></path>
+              </svg>
+              <span>Reply</span>
             </button>
           </div>
         </div>
 
         {isReplying && (
-          <div>
-            <div className="py-2 flex gap-2">
-              <input
-                value={newComment}
-                onChange={(event) => setNewComment(event.target.value)}
-                type="text"
-                placeholder="reply this comment"
-                className="border-[1px] p-1"
-              />
-              <button
-                onClick={() => {
-                  onComment(newComment);
-                  setNewComment("");
-                }}
-                className="border-[1px] rounded-md px-1 border-zinc-800"
+          <div className="h-10 relative">
+            <input
+              value={newComment}
+              onChange={(event) => setNewComment(event.target.value)}
+              type="text"
+              placeholder="reply this comment"
+              className="border-[1px] h-full w-full pl-2 rounded-md overflow-hidden"
+            />
+            <button
+              onClick={() => {
+                onComment(newComment);
+                setNewComment("");
+                setIsReplying(false);
+              }}
+              className="absolute right-1 top-2 -rotate-45"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="size-6"
               >
-                comment
-              </button>
-            </div>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"
+                />
+              </svg>
+            </button>
           </div>
         )}
-        {comments &&
-          comments.map((comment) => (
-            <CommentsItems key={comment.id} comment={comment} />
-          ))}
+
+        {showReply &&
+          comments &&
+          comments.map((comment) => {
+            return <CommentsItems key={comment.id} comment={comment} />;
+          })}
       </div>
     </>
   );

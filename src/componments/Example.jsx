@@ -5,7 +5,13 @@ function Example() {
     {
       id: 1,
       content: "first comment",
-      comments: [],
+      comments: [
+        {
+          id: 2,
+          content: "hi",
+          comments: [],
+        },
+      ],
     },
 
     {

@@ -9,6 +9,7 @@ function Posts() {
   useEffect(() => {
     getPosts();
   }, []);
+
   return (
     <>
       <div className="flex-1 space-y-6">
