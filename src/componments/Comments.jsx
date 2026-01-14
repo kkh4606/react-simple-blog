@@ -32,7 +32,6 @@ function Comments({ id }) {
       );
 
       if (res.status === 201) {
-        console.log(res.data);
         setPostComments((prev) => [...prev, res.data]);
       }
     } catch (err) {
@@ -102,13 +101,37 @@ function Comments({ id }) {
 }
 
 let CommentsItems = ({ comment }) => {
+  function addReplyById(comments, parentId, newReply) {
+    return comments.map((comment) => {
+      if (comment.id === parentId) {
+        return {
+          ...comment,
+          comments_arr: [...(comment.comments_arr || []), newReply],
+        };
+      }
+
+      return {
+        ...comment,
+        comments_arr: addReplyById(
+          comment.comments_arr || [],
+          parentId,
+          newReply
+        ),
+      };
+    });
+  }
+
+  let { setPostComments } = useContext(postContext);
+
   let [isReplying, setIsReplying] = useState(false);
 
-  let [comments, setComments] = useState(comment.comments_arr);
+  let comments = comment.comments_arr || [];
 
   let [newComment, setNewComment] = useState("");
 
   let [showReply, setShowReply] = useState(true);
+
+  let { user } = useContext(authContext);
 
   let onComment = async (newComment) => {
     try {
@@ -124,11 +147,33 @@ let CommentsItems = ({ comment }) => {
         }
       );
 
-      if (res.status === 201) {
-        setComments((prev) => [...prev, res.data]);
-      }
+      setPostComments((prev) => addReplyById(prev, comment.id, res.data));
 
       console.log(res);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  function removeCommentById(comments, idToDelete) {
+    return comments
+      .filter((comment) => comment.id !== idToDelete)
+      .map((comment) => ({
+        ...comment,
+        comments_arr: removeCommentById(comment.comments_arr || [], idToDelete),
+      }));
+  }
+
+  let deleteComment = async (id) => {
+    console.log(comment);
+    try {
+      let res = await axios.delete(`http://127.0.0.1:8000/comments/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      setPostComments((prev) => removeCommentById(prev, id));
     } catch (err) {
       console.log(err);
     }
@@ -175,29 +220,40 @@ let CommentsItems = ({ comment }) => {
           <div className="ml-3">
             <h1 className="font-semibold">{comment.content}</h1>
 
-            <button
-              className="flex items-center"
-              onClick={() => {
-                setIsReplying((prev) => !prev);
-              }}
-            >
-              <svg
-                className="mr-1.5 w-3.5 h-3.5"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 20 18"
+            <div className="flex gap-5">
+              <button
+                className="flex items-center"
+                onClick={() => {
+                  setIsReplying((prev) => !prev);
+                }}
               >
-                <path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M5 5h5M5 8h2m6-3h2m-5 3h6m2-7H2a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h3v5l5-5h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1Z"
-                ></path>
-              </svg>
-              <span>Reply</span>
-            </button>
+                <svg
+                  className="mr-1.5 w-3.5 h-3.5"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 20 18"
+                >
+                  <path
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M5 5h5M5 8h2m6-3h2m-5 3h6m2-7H2a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h3v5l5-5h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1Z"
+                  ></path>
+                </svg>
+                <span>Reply</span>
+              </button>
+
+              {user && user.id === comment.owner_id && (
+                <>
+                  <button>Edit</button>
+                  <button onClick={() => deleteComment(comment.id)}>
+                    Delete
+                  </button>
+                </>
+              )}
+            </div>
           </div>
         </div>
 
