@@ -77,7 +77,7 @@ function Comments({ id }) {
                 onComment(content);
                 setContent("");
               }}
-              className="rounded-md border-[1px] border-zinc-400 px-1 bg-gray-600 text-white"
+              className="rounded-md  border-[1px] border-zinc-400 px-1 bg-gray-600 text-white "
             >
               comment
             </button>
@@ -134,6 +134,10 @@ let CommentsItems = ({ comment }) => {
   let { user } = useContext(authContext);
 
   let onComment = async (newComment) => {
+    if (newComment.trim() === "") {
+      return;
+    }
+
     try {
       let res = await axios.post(
         `http://127.0.0.1:8000/comments/${comment.id}/replies`,
@@ -148,19 +152,17 @@ let CommentsItems = ({ comment }) => {
       );
 
       setPostComments((prev) => addReplyById(prev, comment.id, res.data));
-
-      console.log(res);
     } catch (err) {
       console.log(err);
     }
   };
 
-  function removeCommentById(comments, idToDelete) {
+  function removeCommentById(comments, id) {
     return comments
-      .filter((comment) => comment.id !== idToDelete)
+      .filter((comment) => comment.id !== id)
       .map((comment) => ({
         ...comment,
-        comments_arr: removeCommentById(comment.comments_arr || [], idToDelete),
+        comments_arr: removeCommentById(comment.comments_arr || [], id),
       }));
   }
 
@@ -269,6 +271,7 @@ let CommentsItems = ({ comment }) => {
             <button
               onClick={() => {
                 onComment(newComment);
+
                 setNewComment("");
                 setIsReplying(false);
               }}

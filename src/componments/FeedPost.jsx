@@ -2,6 +2,7 @@ import axios from "axios";
 import { useContext, useState } from "react";
 import { postContext } from "../context/PostContext";
 import Comments from "./Comments";
+import { Textarea } from "@headlessui/react";
 
 function FeedPost({ _user, avatar, timeAgo, content, image, likes, id, post }) {
   let { setPosts, posts } = useContext(postContext);
@@ -82,35 +83,8 @@ function FeedPost({ _user, avatar, timeAgo, content, image, likes, id, post }) {
     }
   };
 
-  if (isEdit) {
-    return (
-      <div className="flex flex-col justify-center  gap-2   border-[1px] bg-gray-100  mx-8 rounded-md">
-        <div className="flex gap-2 full py-2 px-2">
-          <img
-            src={avatar}
-            alt={_user}
-            className="w-10 h-10 rounded-full object-cover"
-          />
-          <textarea
-            className="border-[1px] px-1 py-2 w-full rounded-md "
-            value={editedContent}
-            onChange={(event) => setEditedContent(event.target.value)}
-          ></textarea>
-        </div>
-        <div className="flex justify-end full">
-          <button
-            onClick={() => editPost(id)}
-            className="w-20 border-[1px] bg-primary-600 text-white py-1 mb-2 rounded-md"
-          >
-            Post
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="bg-white mx-8 rounded-lg shadow overflow-hidden">
+    <div className="bg-white relative mx-8 rounded-lg shadow overflow-hidden">
       <div className="p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
@@ -125,12 +99,40 @@ function FeedPost({ _user, avatar, timeAgo, content, image, likes, id, post }) {
             </div>
           </div>
 
+          {isEdit && (
+            <div className="absolute  top-4 px-2  rounded-md border-[1px] border-zinc-200 flex flex-col gap-2 bg-gray-100 w-2/4 h-40">
+              <Textarea
+                value={editedContent}
+                onChange={(event) => setEditedContent(event.target.value)}
+                type="text"
+                className="w-full h-2/3 px-2 py-3 "
+              />
+              <div className="flex justify-end gap-2">
+                <button
+                  onClick={() => setIsEdit(false)}
+                  className="border-[1px] px-2 py-1 rounded-md"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    editPost(id);
+                    setIsEdit(false);
+                  }}
+                  className="border-[1px] px-2 py-1 rounded-md bg-gray-600 text-white"
+                >
+                  Post
+                </button>
+              </div>
+            </div>
+          )}
+
           <div className="flex flex-col relative">
             {isModified && (
               <div className=" absolute -left-32 flex flex-col gap-2 w-32 py-2 bg-gray-200 rounded-md">
                 <button
                   onClick={() => deltePost(id)}
-                  className="flex hover:bg-slate-400 w-full transition-all px-2 py-1"
+                  className="flex hover:bg-slate-400 w-full transition-all rounded-md px-2 py-1"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -150,7 +152,7 @@ function FeedPost({ _user, avatar, timeAgo, content, image, likes, id, post }) {
                 </button>
                 <button
                   onClick={() => setIsEdit((prev) => !prev)}
-                  className="flex hover:bg-slate-400 w-full transition-all px-2 py-1"
+                  className="flex hover:bg-slate-400 w-full rounded-md transition-all px-2 py-1"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
