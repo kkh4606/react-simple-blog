@@ -133,6 +133,10 @@ let CommentsItems = ({ comment }) => {
 
   let { user } = useContext(authContext);
 
+  let [isEditComment, setIsEditComment] = useState(false);
+
+  let [commentContent, setCommentContent] = useState(comment.content);
+
   let onComment = async (newComment) => {
     if (newComment.trim() === "") {
       return;
@@ -157,17 +161,15 @@ let CommentsItems = ({ comment }) => {
     }
   };
 
-  function removeCommentById(comments, id) {
-    return comments
-      .filter((comment) => comment.id !== id)
-      .map((comment) => ({
-        ...comment,
-        comments_arr: removeCommentById(comment.comments_arr || [], id),
-      }));
-  }
-
   let deleteComment = async (id) => {
-    console.log(comment);
+    function removeCommentById(comments, id) {
+      return comments
+        .filter((comment) => comment.id !== id)
+        .map((comment) => ({
+          ...comment,
+          comments_arr: removeCommentById(comment.comments_arr || [], id),
+        }));
+    }
     try {
       let res = await axios.delete(`http://127.0.0.1:8000/comments/${id}`, {
         headers: {
@@ -176,6 +178,47 @@ let CommentsItems = ({ comment }) => {
       });
 
       setPostComments((prev) => removeCommentById(prev, id));
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  let editComment = async (id) => {
+    try {
+      let res = await axios.put(
+        `http://127.0.0.1:8000/comments/${id}`,
+        {
+          content: commentContent,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      function updateCommentById(comments, id, updateContent) {
+        return comments.map((comment) => {
+          if (comment.id === id) {
+            return {
+              ...comment,
+              content: updateContent,
+            };
+          }
+
+          return {
+            ...comment,
+            comments_arr: updateCommentById(
+              comment.comments_arr || [],
+              id,
+              updateContent
+            ),
+          };
+        });
+      }
+
+      setPostComments((prev) => updateCommentById(prev, id, commentContent));
+      setIsEditComment(false);
     } catch (err) {
       console.log(err);
     }
@@ -249,11 +292,33 @@ let CommentsItems = ({ comment }) => {
 
               {user && user.id === comment.owner_id && (
                 <>
-                  <button>Edit</button>
+                  <button onClick={() => setIsEditComment((prev) => !prev)}>
+                    Edit
+                  </button>
                   <button onClick={() => deleteComment(comment.id)}>
                     Delete
                   </button>
                 </>
+              )}
+
+              {isEditComment && (
+                <div className="flex flex-col gap-2 min-w-60 ">
+                  <textarea
+                    name=""
+                    value={commentContent}
+                    onChange={(event) => setCommentContent(event.target.value)}
+                  />
+                  <div className="flex justify-end">
+                    <button
+                      onClick={() => {
+                        editComment(comment.id);
+                      }}
+                      className="bg-gray-400 text-white px-2 rounded-md"
+                    >
+                      update
+                    </button>
+                  </div>
+                </div>
               )}
             </div>
           </div>

@@ -9,7 +9,7 @@ function FeedPost({ _user, avatar, timeAgo, content, image, likes, id, post }) {
 
   let [isModified, setIsModified] = useState(false);
 
-  let [isEdit, setIsEdit] = useState(false);
+  let [isEditContent, setIsEditContent] = useState(false);
 
   let [editedContent, setEditedContent] = useState(content);
 
@@ -54,6 +54,8 @@ function FeedPost({ _user, avatar, timeAgo, content, image, likes, id, post }) {
   };
 
   let editPost = async (id) => {
+    if (editedContent.trim() === "") return;
+
     try {
       let res = await axios.put(
         `http://127.0.0.1:8000/posts/${id}`,
@@ -68,7 +70,7 @@ function FeedPost({ _user, avatar, timeAgo, content, image, likes, id, post }) {
       );
 
       if (res.status === 200) {
-        setIsEdit(false);
+        setIsEditContent(false);
 
         setPosts(
           posts.map((post) => {
@@ -99,17 +101,20 @@ function FeedPost({ _user, avatar, timeAgo, content, image, likes, id, post }) {
             </div>
           </div>
 
-          {isEdit && (
-            <div className="absolute  top-4 px-2  rounded-md border-[1px] border-zinc-200 flex flex-col gap-2 bg-gray-100 w-2/4 h-40">
+          {isEditContent && (
+            <div className="absolute  top-2 left-56 rounded-md bg-gray-200 overflow-hidden flex flex-col gap-1  w-2/4 h-36">
               <Textarea
                 value={editedContent}
                 onChange={(event) => setEditedContent(event.target.value)}
                 type="text"
-                className="w-full h-2/3 px-2 py-3 "
+                className="w-full h-2/3 px-2 py-3 bg-gray-300 "
               />
               <div className="flex justify-end gap-2">
                 <button
-                  onClick={() => setIsEdit(false)}
+                  onClick={() => {
+                    setIsEditContent(false);
+                    setEditedContent("");
+                  }}
                   className="border-[1px] px-2 py-1 rounded-md"
                 >
                   Cancel
@@ -117,7 +122,7 @@ function FeedPost({ _user, avatar, timeAgo, content, image, likes, id, post }) {
                 <button
                   onClick={() => {
                     editPost(id);
-                    setIsEdit(false);
+                    setIsEditContent(false);
                   }}
                   className="border-[1px] px-2 py-1 rounded-md bg-gray-600 text-white"
                 >
@@ -151,7 +156,7 @@ function FeedPost({ _user, avatar, timeAgo, content, image, likes, id, post }) {
                   <span>Delete</span>
                 </button>
                 <button
-                  onClick={() => setIsEdit((prev) => !prev)}
+                  onClick={() => setIsEditContent((prev) => !prev)}
                   className="flex hover:bg-slate-400 w-full rounded-md transition-all px-2 py-1"
                 >
                   <svg
@@ -194,7 +199,7 @@ function FeedPost({ _user, avatar, timeAgo, content, image, likes, id, post }) {
       </div>
       {image && <img src={image} alt="Post" className="w-full h-auto" />}
       <div className="px-3 py-3 border-t border-gray-100">
-        <div className="flex flex-col justify-end gap-3 py-2 text-gray-500">
+        <div className="flex flex-col  justify-end gap-3 py-2 text-gray-500">
           <div className="flex gap-7 items-center space-x-1 hover:text-primary-600">
             <button
               className="flex items-center gap-1"
