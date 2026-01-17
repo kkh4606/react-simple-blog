@@ -46,6 +46,7 @@ let PostContextProvider = ({ children }) => {
         posts,
         getPosts,
         setPosts,
+
         postComments,
         setPostComments,
         getComments,

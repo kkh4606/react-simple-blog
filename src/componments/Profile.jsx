@@ -1,12 +1,15 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { postContext } from "../context/PostContext";
 import FeedPost from "./FeedPost";
 import { authContext } from "../context/AuthContext";
+import PostCreate from "../pages/posts/PostCreate";
 
 function Profile() {
   let { posts, getPosts } = useContext(postContext);
 
   let { user, getUser } = useContext(authContext);
+
+  let [total_posts, setTotalPosts] = useState(0);
 
   useEffect(() => {
     getUser();
@@ -17,6 +20,16 @@ function Profile() {
       getPosts();
     }
   }, [user]);
+
+  useEffect(() => {
+    if (user && posts) {
+      const total = posts.filter(
+        (post) => post.Post.owner_id === user.id
+      ).length;
+
+      setTotalPosts(total);
+    }
+  }, [user, posts]);
 
   return (
     <>
@@ -42,11 +55,13 @@ function Profile() {
             </p>
             <div className="flex space-x-2">
               <div className="flex flex-col items-center rounded-xl bg-gray-100 px-4 py-2">
-                <p className="text-sm font-medium text-gray-500">Articles</p>
-                <p className="text-3xl font-medium text-gray-600">13</p>
+                <p className="text-sm font-medium text-gray-500">Posts</p>
+                <p className="text-3xl font-medium text-gray-600">
+                  {total_posts}
+                </p>
               </div>
               <div className="flex flex-col items-center rounded-xl bg-gray-100 px-4 py-2">
-                <p className="text-sm font-medium text-gray-500">Papers</p>
+                <p className="text-sm font-medium text-gray-500">Following</p>
                 <p className="text-3xl font-medium text-gray-600">7</p>
               </div>
               <div className="flex flex-col items-center rounded-xl bg-gray-100 px-4 py-2">
@@ -66,6 +81,8 @@ function Profile() {
             </div>
           </div>
         </div>
+
+        <PostCreate />
 
         <h1 className="font-bold text-2xl ml-9">Posts</h1>
         {posts &&
