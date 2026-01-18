@@ -11,6 +11,7 @@ import NotFound from "../componments/NotFound";
 import ProtectedUserRoute from "../utils/ProtectedUserRoute";
 import Example from "../componments/Example";
 import TestingWithApiData from "../componments/TestingWithApiData";
+import AccountSettings from "../componments/AccountSettings";
 
 const router = createBrowserRouter([
   {
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
       {
         path: "/profile",
         element: <Profile />,
+      },
+      {
+        path: "/settings",
+        element: <AccountSettings />,
       },
     ],
   },

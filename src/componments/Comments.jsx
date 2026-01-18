@@ -28,7 +28,7 @@ function Comments({ id }) {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        }
+        },
       );
 
       if (res.status === 201) {
@@ -37,6 +37,19 @@ function Comments({ id }) {
     } catch (err) {
       console.log(err);
     }
+  };
+
+  let [total, setToal] = useState(0);
+
+  let findTotal = (comments) => {
+    if (comments.length === 0) return 0;
+
+    comments.forEach((comment) => {
+      setToal((prev) => prev + 1);
+      if (comment.comments && comment.comments.length > 0) {
+        findTotal(comment.comments);
+      }
+    });
   };
 
   useEffect(() => {
@@ -58,7 +71,7 @@ function Comments({ id }) {
           onFocus={() => setShowButtons(true)}
           type="text"
           placeholder="Write a comment"
-          className="border-[1px] border-zinc-400 py-6 px-2 w-full rounded-md"
+          className="border-[1px] border-zinc-400 py-2 px-2 w-full rounded-md"
         />
 
         {showButtons && (
@@ -115,7 +128,7 @@ let CommentsItems = ({ comment }) => {
         comments_arr: addReplyById(
           comment.comments_arr || [],
           parentId,
-          newReply
+          newReply,
         ),
       };
     });
@@ -152,7 +165,7 @@ let CommentsItems = ({ comment }) => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        }
+        },
       );
 
       setPostComments((prev) => addReplyById(prev, comment.id, res.data));
@@ -194,7 +207,7 @@ let CommentsItems = ({ comment }) => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        }
+        },
       );
 
       function updateCommentById(comments, id, updateContent) {
@@ -211,7 +224,7 @@ let CommentsItems = ({ comment }) => {
             comments_arr: updateCommentById(
               comment.comments_arr || [],
               id,
-              updateContent
+              updateContent,
             ),
           };
         });

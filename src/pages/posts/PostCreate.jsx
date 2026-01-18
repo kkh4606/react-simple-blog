@@ -10,9 +10,7 @@ function PostCreate() {
     published: true,
   });
 
-  let { logged_in_user, setLoggedInUser } = useContext(authContext);
-
-  let [file, setFile] = useState(null);
+  let { user, setUser } = useContext(authContext);
 
   let { posts, setPosts } = useContext(postContext);
 
@@ -40,11 +38,6 @@ function PostCreate() {
     }
   };
 
-  const handleChange = (e) => {
-    if (!e.target.files || e.target.files.length === 0) return;
-    setFile(e.target.files[0]);
-  };
-
   return (
     <>
       <div className="bg-white rounded-lg shadow p-4 mx-8">
@@ -52,8 +45,8 @@ function PostCreate() {
           <div>
             <img
               src={
-                logged_in_user && logged_in_user.profile_pic
-                  ? logged_in_user.profile_pic
+                user && user.profile_pic
+                  ? user.profile_pic
                   : "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80"
               }
               alt="User"

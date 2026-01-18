@@ -24,7 +24,7 @@ function Profile() {
   useEffect(() => {
     if (user && posts) {
       const total = posts.filter(
-        (post) => post.Post.owner_id === user.id
+        (post) => post.Post.owner_id === user.id,
       ).length;
 
       setTotalPosts(total);
