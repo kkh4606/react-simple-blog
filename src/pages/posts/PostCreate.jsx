@@ -10,7 +10,7 @@ function PostCreate() {
     published: true,
   });
 
-  let { user, setUser } = useContext(authContext);
+  let { user, getUser } = useContext(authContext);
 
   let { posts, setPosts } = useContext(postContext);
 
@@ -37,6 +37,10 @@ function PostCreate() {
       setError(err);
     }
   };
+
+  useEffect(() => {
+    getUser();
+  }, []);
 
   return (
     <>

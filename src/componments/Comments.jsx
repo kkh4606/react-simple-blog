@@ -3,14 +3,14 @@ import { postContext } from "../context/PostContext";
 import { authContext } from "../context/AuthContext";
 import axios from "axios";
 
-function Comments({ id }) {
+function Comments({ id, setTotal }) {
   let [content, setContent] = useState("");
 
   let [comments, setComments] = useState([]);
 
   let { postComments, getComments, setPostComments } = useContext(postContext);
 
-  let { user, getUser } = useContext(authContext);
+  let { getUser } = useContext(authContext);
 
   let [showButtons, setShowButtons] = useState(false);
 
@@ -33,23 +33,11 @@ function Comments({ id }) {
 
       if (res.status === 201) {
         setPostComments((prev) => [...prev, res.data]);
+        setTotal((prev) => prev + 1);
       }
     } catch (err) {
       console.log(err);
     }
-  };
-
-  let [total, setToal] = useState(0);
-
-  let findTotal = (comments) => {
-    if (comments.length === 0) return 0;
-
-    comments.forEach((comment) => {
-      setToal((prev) => prev + 1);
-      if (comment.comments && comment.comments.length > 0) {
-        findTotal(comment.comments);
-      }
-    });
   };
 
   useEffect(() => {
@@ -62,6 +50,7 @@ function Comments({ id }) {
       setComments(postComments);
     }
   }, [postComments]);
+
   return (
     <>
       <div className="flex flex-col gap-1">
@@ -102,6 +91,7 @@ function Comments({ id }) {
             return (
               <CommentsItems
                 comment={comment}
+                setTotal={setTotal}
                 onComment={onComment}
                 key={comment.id}
               />
@@ -113,7 +103,7 @@ function Comments({ id }) {
   );
 }
 
-let CommentsItems = ({ comment }) => {
+let CommentsItems = ({ comment, setTotal }) => {
   function addReplyById(comments, parentId, newReply) {
     return comments.map((comment) => {
       if (comment.id === parentId) {
@@ -169,6 +159,7 @@ let CommentsItems = ({ comment }) => {
       );
 
       setPostComments((prev) => addReplyById(prev, comment.id, res.data));
+      setTotal((prev) => prev + 1);
     } catch (err) {
       console.log(err);
     }
@@ -184,6 +175,15 @@ let CommentsItems = ({ comment }) => {
         }));
     }
     try {
+      let comment_res = await axios.get(
+        `http:///127.0.0.1:8000/comments/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        },
+      );
+
       let res = await axios.delete(`http://127.0.0.1:8000/comments/${id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -191,6 +191,25 @@ let CommentsItems = ({ comment }) => {
       });
 
       setPostComments((prev) => removeCommentById(prev, id));
+
+      if (comment_res.data.comments_arr.length === 0) {
+        setTotal((prev) => prev - 1);
+      } else {
+        function findTotalReplies(comments) {
+          let totalReplies = 0;
+          for (let comment of comments) {
+            totalReplies += 1; // Count the comment itself
+            if (comment.comments_arr && comment.comments_arr.length > 0) {
+              totalReplies += findTotalReplies(comment.comments_arr);
+            }
+          }
+
+          return totalReplies;
+        }
+
+        let repliesCount = findTotalReplies(comment_res.data.comments_arr);
+        setTotal((prev) => prev - (1 + repliesCount));
+      }
     } catch (err) {
       console.log(err);
     }
@@ -376,7 +395,13 @@ let CommentsItems = ({ comment }) => {
         {showReply &&
           comments &&
           comments.map((comment) => {
-            return <CommentsItems key={comment.id} comment={comment} />;
+            return (
+              <CommentsItems
+                key={comment.id}
+                comment={comment}
+                setTotal={setTotal}
+              />
+            );
           })}
       </div>
     </>
