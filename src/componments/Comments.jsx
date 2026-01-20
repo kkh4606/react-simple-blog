@@ -286,7 +286,11 @@ let CommentsItems = ({ comment, setTotal }) => {
           <div className="flex items-center gap-2 ml-2">
             <img
               className="w-12 h-12 rounded-full object-cover"
-              src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80"
+              src={
+                comment.owner.profile_pic
+                  ? comment.owner.profile_pic
+                  : "https://icon-library.com/images/no-user-image-icon/no-user-image-icon-0.jpg"
+              }
               alt=""
             />
             <h1 className="font-bold text-[14px]">{comment.owner.name}</h1>

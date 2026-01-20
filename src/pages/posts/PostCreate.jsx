@@ -51,7 +51,7 @@ function PostCreate() {
               src={
                 user && user.profile_pic
                   ? user.profile_pic
-                  : "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80"
+                  : "https://icon-library.com/images/no-user-image-icon/no-user-image-icon-0.jpg"
               }
               alt="User"
               className="w-12 h-12 rounded-full object-cover"

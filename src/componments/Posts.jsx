@@ -25,7 +25,7 @@ function Posts() {
                   avatar={
                     post.Post.owner.profile_pic
                       ? post.Post.owner.profile_pic
-                      : "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=100&h=100&q=80"
+                      : "https://icon-library.com/images/no-user-image-icon/no-user-image-icon-0.jpg"
                   }
                   timeAgo={new Date(post.Post.created_at).toLocaleString()}
                   content={post.Post.content}
