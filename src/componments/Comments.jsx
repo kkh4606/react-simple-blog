@@ -2,8 +2,9 @@ import { useContext, useEffect, useState } from "react";
 import { postContext } from "../context/PostContext";
 import { authContext } from "../context/AuthContext";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
-function Comments({ id, setTotal }) {
+function Comments({ post_id, setTotal, post }) {
   let [content, setContent] = useState("");
 
   let [comments, setComments] = useState([]);
@@ -15,12 +16,13 @@ function Comments({ id, setTotal }) {
   let [showButtons, setShowButtons] = useState(false);
 
   let onComment = async (newComment) => {
+    console.log("post_id ,", post_id);
     if (!newComment) {
       return;
     }
     try {
       let res = await axios.post(
-        "http://127.0.0.1:8000/comments/" + id,
+        "http://127.0.0.1:8000/comments/" + post_id,
         {
           content: newComment,
         },
@@ -87,11 +89,12 @@ function Comments({ id, setTotal }) {
         )}
 
         {comments.map((comment) => {
-          if (comment.post_id === id) {
+          if (comment.post_id === post_id) {
             return (
               <CommentsItems
                 comment={comment}
                 setTotal={setTotal}
+                post={post}
                 onComment={onComment}
                 key={comment.id}
               />
@@ -103,7 +106,7 @@ function Comments({ id, setTotal }) {
   );
 }
 
-let CommentsItems = ({ comment, setTotal }) => {
+let CommentsItems = ({ comment, setTotal, post }) => {
   function addReplyById(comments, parentId, newReply) {
     return comments.map((comment) => {
       if (comment.id === parentId) {
@@ -284,20 +287,23 @@ let CommentsItems = ({ comment, setTotal }) => {
             </button>
           )}
           <div className="flex items-center gap-2 ml-2">
-            <img
-              className="w-12 h-12 rounded-full object-cover"
-              src={
-                comment.owner.profile_pic
-                  ? comment.owner.profile_pic
-                  : "https://icon-library.com/images/no-user-image-icon/no-user-image-icon-0.jpg"
-              }
-              alt=""
-            />
-            <h1 className="font-bold text-[14px]">{comment.owner.name}</h1>
+            <Link className="flex items-center gap-2">
+              <img
+                className="w-12 h-12 rounded-full object-cover"
+                src={
+                  comment.owner.profile_pic
+                    ? comment.owner.profile_pic
+                    : "https://icon-library.com/images/no-user-image-icon/no-user-image-icon-0.jpg"
+                }
+                alt=""
+              />
+              <h1 className="font-bold text-[14px]">{comment.owner.name}</h1>
+            </Link>
             <p className="text-[12px]">
               {new Date(comment.created_at).toLocaleString()}
             </p>
           </div>
+
           <div className="ml-3">
             <h1 className="font-semibold">{comment.content}</h1>
 
@@ -323,6 +329,7 @@ let CommentsItems = ({ comment, setTotal }) => {
                     d="M5 5h5M5 8h2m6-3h2m-5 3h6m2-7H2a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h3v5l5-5h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1Z"
                   ></path>
                 </svg>
+
                 <span>Reply</span>
               </button>
 
@@ -402,6 +409,7 @@ let CommentsItems = ({ comment, setTotal }) => {
             return (
               <CommentsItems
                 key={comment.id}
+                post={post}
                 comment={comment}
                 setTotal={setTotal}
               />

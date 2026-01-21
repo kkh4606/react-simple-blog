@@ -12,6 +12,7 @@ import ProtectedUserRoute from "../utils/ProtectedUserRoute";
 import Example from "../componments/Example";
 import TestingWithApiData from "../componments/TestingWithApiData";
 import AccountSettings from "../componments/AccountSettings";
+import UserDetails from "../componments/UserDetails";
 
 const router = createBrowserRouter([
   {
@@ -28,8 +29,13 @@ const router = createBrowserRouter([
       },
 
       {
-        path: "/profile",
+        path: "/me",
         element: <Profile />,
+      },
+
+      {
+        path: "/user-details/:id",
+        element: <UserDetails />,
       },
       {
         path: "/settings",

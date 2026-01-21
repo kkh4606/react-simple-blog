@@ -1,36 +1,35 @@
+import axios from "axios";
 import { useContext, useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { postContext } from "../context/PostContext";
 import FeedPost from "./FeedPost";
-import { authContext } from "../context/AuthContext";
-import PostCreate from "../pages/posts/PostCreate";
 
-function Profile() {
-  let { posts, getPosts } = useContext(postContext);
+function UserDetails() {
+  let { id } = useParams();
 
-  let { user, getUser } = useContext(authContext);
+  let { posts } = useContext(postContext);
 
-  let [total_posts, setTotalPosts] = useState(0);
+  let [userInfo, setUserInfo] = useState(null);
 
-  useEffect(() => {
-    getUser();
-  }, []);
+  let getUser = async (id) => {
+    try {
+      let res = await axios.get(`http://127.0.0.1:8000/users/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
 
-  useEffect(() => {
-    if (user) {
-      getPosts();
+      if (res.status === 200) {
+        setUserInfo(res.data);
+      }
+    } catch (err) {
+      console.log(res);
     }
-  }, [user]);
+  };
 
   useEffect(() => {
-    if (user && posts) {
-      const total = posts.filter(
-        (post) => post.Post.owner_id === user.id,
-      ).length;
-
-      setTotalPosts(total);
-    }
-  }, [user, posts]);
-
+    getUser(id);
+  }, [id]);
   return (
     <>
       <div className="flex-1  space-y-6">
@@ -39,8 +38,8 @@ function Profile() {
             <img
               className="h-56 rounded-lg object-cover md:w-56"
               src={
-                user && user.profile_pic
-                  ? user.profile_pic
+                userInfo && userInfo.profile_pic
+                  ? userInfo.profile_pic
                   : "https://icon-library.com/images/no-user-image-icon/no-user-image-icon-0.jpg"
               }
               alt=""
@@ -48,7 +47,7 @@ function Profile() {
           </div>
           <div className="">
             <p className="text-xl font-medium text-gray-700">
-              {user && user.name}
+              {userInfo && userInfo.name}
             </p>
             <p className="mb-4 text-sm font-medium text-gray-500">
               Junior Programmer
@@ -56,9 +55,7 @@ function Profile() {
             <div className="flex space-x-2">
               <div className="flex flex-col items-center rounded-xl bg-gray-100 px-4 py-2">
                 <p className="text-sm font-medium text-gray-500">Posts</p>
-                <p className="text-3xl font-medium text-gray-600">
-                  {total_posts}
-                </p>
+                <p className="text-3xl font-medium text-gray-600">0</p>
               </div>
               <div className="flex flex-col items-center rounded-xl bg-gray-100 px-4 py-2">
                 <p className="text-sm font-medium text-gray-500">Following</p>
@@ -82,13 +79,11 @@ function Profile() {
           </div>
         </div>
 
-        <PostCreate />
-
         <h1 className="font-bold text-2xl ml-9">Posts</h1>
         {posts &&
-          user &&
+          userInfo &&
           posts.map((post) => {
-            if (post.Post.owner.id === user.id)
+            if (post.Post.owner.id === userInfo.id)
               return (
                 <div className="space-y-6" key={post.Post.id}>
                   <FeedPost
@@ -112,4 +107,4 @@ function Profile() {
   );
 }
 
-export default Profile;
+export default UserDetails;

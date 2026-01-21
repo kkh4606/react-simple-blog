@@ -1,11 +1,21 @@
 import axios from "axios";
-import { use, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { postContext } from "../context/PostContext";
 import Comments from "./Comments";
 import { Textarea } from "@headlessui/react";
 import { authContext } from "../context/AuthContext";
+import { Link } from "react-router-dom";
 
-function FeedPost({ _user, avatar, timeAgo, content, image, likes, id, post }) {
+function FeedPost({
+  username,
+  avatar,
+  timeAgo,
+  content,
+  image,
+  likes,
+  post_id,
+  post,
+}) {
   let { setPosts, posts, getPosts } = useContext(postContext);
 
   let [isModified, setIsModified] = useState(false);
@@ -97,26 +107,34 @@ function FeedPost({ _user, avatar, timeAgo, content, image, likes, id, post }) {
       list.reduce((sum, c) => sum + 1 + countAll(c.comments_arr || []), 0);
 
     const totalCount = countAll(
-      post.Post.comments.filter((c) => c.post_id === id),
+      post.Post.comments.filter((c) => c.post_id === post_id),
     );
 
     setTotal(totalCount);
-  }, [post.Post.comments, id]);
+  }, [post.Post.comments, post_id]);
 
   return (
     <div className="bg-white relative mx-8 rounded-lg shadow overflow-hidden">
       <div className="p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <img
-              src={avatar}
-              alt={_user}
-              className="w-10 h-10 rounded-full object-cover"
-            />
-            <div>
-              <h3 className="font-semibold text-gray-900">{_user}</h3>
-              <p className="text-xs text-gray-500">{timeAgo}</p>
-            </div>
+            <Link
+              to={
+                user && user.id === post.Post.owner_id
+                  ? "/me"
+                  : "/user-details/" + post.Post.owner_id
+              }
+              className="flex items-center gap-2"
+            >
+              <img
+                src={avatar}
+                alt={username}
+                className="w-10 h-10 rounded-full object-cover"
+              />
+              <h3 className="font-semibold text-gray-900">{username}</h3>
+            </Link>
+
+            <p className="text-xs text-gray-500">{timeAgo}</p>
           </div>
 
           {isEditContent && (
@@ -139,7 +157,7 @@ function FeedPost({ _user, avatar, timeAgo, content, image, likes, id, post }) {
                 </button>
                 <button
                   onClick={() => {
-                    editPost(id);
+                    editPost(post_id);
                     setIsEditContent(false);
                   }}
                   className="border-[1px] px-2 py-1 rounded-md bg-gray-600 text-white"
@@ -155,7 +173,7 @@ function FeedPost({ _user, avatar, timeAgo, content, image, likes, id, post }) {
               {isModified && (
                 <div className=" absolute -left-32 flex flex-col gap-2 w-32 py-2 bg-gray-200 rounded-md">
                   <button
-                    onClick={() => deltePost(id)}
+                    onClick={() => deltePost(post_id)}
                     className="flex hover:bg-slate-400 w-full transition-all rounded-md px-2 py-1"
                   >
                     <svg
@@ -224,7 +242,7 @@ function FeedPost({ _user, avatar, timeAgo, content, image, likes, id, post }) {
             <button
               className="flex items-center gap-1"
               onClick={() => {
-                likePost(id);
+                likePost(post_id);
               }}
             >
               <svg
@@ -262,8 +280,7 @@ function FeedPost({ _user, avatar, timeAgo, content, image, likes, id, post }) {
               <p>Comments</p>
             </button>
           </div>
-
-          <Comments id={id} setTotal={setTotal} />
+          <Comments post_id={post_id} setTotal={setTotal} post={post} />
         </div>
       </div>
     </div>

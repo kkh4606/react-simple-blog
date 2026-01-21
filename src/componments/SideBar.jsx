@@ -60,7 +60,7 @@ function SideBar() {
             <span>Explore</span>
           </Link>
           <Link
-            to={"/profile"}
+            to={"/me"}
             className="w-full flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 text-gray-700 font-medium"
           >
             <button>
