@@ -3,6 +3,7 @@ import SideBar from "./SideBar";
 import { useContext, useState } from "react";
 import axios from "axios";
 import { postContext } from "../context/PostContext";
+import Login from "../pages/users/Login";
 
 function Layout() {
   let { posts, setPosts } = useContext(postContext);
@@ -38,6 +39,8 @@ function Layout() {
     setIsSearching(false);
     setPosts(res.data);
   };
+
+  if (!localStorage.getItem("token")) return <Login />;
   return (
     <>
       <div className="bg-gray-50  min-h-screen max-w-7xl  mx-auto  px-4 sm:px-6 lg:px-8">

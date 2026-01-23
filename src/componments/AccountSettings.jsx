@@ -1,20 +1,18 @@
 import axios from "axios";
 import { authContext } from "../context/AuthContext";
-import { useContext, useState } from "react";
-import { Form } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
 
 function AccountSettings() {
-  let { user, setUser } = useContext(authContext);
+  let { user, setUser, getUser } = useContext(authContext);
 
   let [file, setFile] = useState(null);
-
-  let [imageFile, setImageFile] = useState("");
 
   let handleInputChange = (e) => {
     setFile(e.target.files[0]);
   };
 
   let changeProfile = async (e) => {
+    console.log("profile changing ...");
     e.preventDefault();
 
     try {
@@ -27,18 +25,30 @@ function AccountSettings() {
         },
       });
 
-      console.log(res);
+      if (res.status === 200) {
+        setUser({ ...user, profile_pic: res.data.profile_pic });
+      }
     } catch (err) {
       console.log(err);
     }
   };
+
+  useEffect(() => {
+    getUser();
+  }, []);
 
   return (
     <>
       <div className="bg-gray-200 min-h-screen pt-2 font-mono">
         <div className="container mx-auto">
           <div className="inputs w-full max-w-2xl p-6 mx-auto">
-            <h2 className="text-2xl text-gray-900">Account Setting</h2>
+            <h2 className="text-3xl font-bold text-gray-900">Setting</h2>
+            <div className="mt-4 flex items-center justify-between">
+              <div>
+                <h1 className="font-semibold text-xl">Personal info</h1>
+                <p>Update your photo and personal details here</p>
+              </div>
+            </div>
             <form className="mt-6 border-t border-gray-400 pt-4">
               <div className="flex flex-wrap -mx-3 mb-6">
                 <div className="w-full md:w-full px-3 mb-6">
@@ -56,14 +66,6 @@ function AccountSettings() {
                     required
                   />
                 </div>
-                <div className="w-full md:w-full px-3 mb-6 ">
-                  <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                    password
-                  </label>
-                  <button className="appearance-none bg-gray-200 text-gray-900 px-2 py-1 shadow-sm border border-gray-400 rounded-md ">
-                    change your password
-                  </button>
-                </div>
 
                 <div className="personal w-full border-t border-gray-400 pt-4">
                   <div className="w-full md:w-full px-3 mb-6">
@@ -76,13 +78,27 @@ function AccountSettings() {
                       required
                     />
                   </div>
+                  <div className="bg-slate-400 h-[1px] w-full px-6"></div>
+
                   <div className="flex justify-center my-7">
                     <div className="rounded-lg shadow-xl bg-gray-50  w-full  mx-3">
                       <div className="m-4">
                         <label className="inline-block mb-2 text-gray-500">
                           Upload Profile Image(jpg,png,svg,jpeg)
                         </label>
-                        <div className="flex items-center justify-center w-full">
+
+                        <div className="h-32 w-32 translate-x-56">
+                          <img
+                            className=" rounded-full object-cover border-[5px] border-gray-400 md:w-56"
+                            src={
+                              user
+                                ? user.profile_pic
+                                : "https://icon-library.com/images/no-user-image-icon/no-user-image-icon-0.jpg"
+                            }
+                            alt={user ? user.username : "profile image"}
+                          />
+                        </div>
+                        <div className="flex items-center justify-center w-full mt-3">
                           <label className="flex flex-col w-full h-32 border-4 border-dashed hover:bg-gray-100 hover:border-gray-300">
                             <div className="flex flex-col items-center justify-center pt-7">
                               <svg

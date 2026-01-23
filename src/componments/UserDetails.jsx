@@ -7,11 +7,11 @@ import FeedPost from "./FeedPost";
 function UserDetails() {
   let { id } = useParams();
 
-  let { posts } = useContext(postContext);
+  let { posts, getPosts } = useContext(postContext);
 
   let [userInfo, setUserInfo] = useState(null);
 
-  let getUser = async (id) => {
+  let getUserdetails = async (id) => {
     try {
       let res = await axios.get(`http://127.0.0.1:8000/users/${id}`, {
         headers: {
@@ -28,7 +28,8 @@ function UserDetails() {
   };
 
   useEffect(() => {
-    getUser(id);
+    getUserdetails(id);
+    getPosts();
   }, [id]);
   return (
     <>
